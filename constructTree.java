@@ -1,35 +1,74 @@
 import java.util.HashMap;
+import java.util.Map;
 
 public class constructTree {
     public class TreeNode {
-      int val;
-      TreeNode left;
-      TreeNode right;
-      TreeNode() {}
-      TreeNode(int val) { this.val = val; }
-      TreeNode(int val, TreeNode left, TreeNode right) {
-          this.val = val;
-          this.left = left;
-          this.right = right;
-      }
-  }
+        int val;
+        TreeNode left;
+        TreeNode right;
 
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
-        HashMap<Integer,Integer> map = new HashMap<>();
-        for(int i = 0;i<inorder.length;i++)
-            map.put(inorder[i],i);
-        int preindex[] = {0};
-        return build(preorder,map,preindex,0,inorder.length-1);
+        TreeNode() {
+        }
+
+        TreeNode(int val) {
+            this.val = val;
+        }
+
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
     }
-    public TreeNode build(int preorder[], HashMap<Integer,Integer> map, int preindex[], int left, int right){
-        if(left > right)
+
+
+    Map<Integer, Integer> map = new HashMap();
+
+    int index = 0;
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+
+        if (inorder.length == 0 || postorder.length == 0) {
+
             return null;
-        int rootVal = preorder[preindex[0]];
-        preindex[0]++;
-        TreeNode root = new TreeNode(rootVal);
-        int index = map.get(rootVal);
-        root.left = build(preorder,map,preindex,left,index-1);
-        root.right = build(preorder,map,preindex,index+1,right);
+
+        }
+
+        index = postorder.length - 1;
+
+        for (int i = 0; i < inorder.length; i++) {
+
+            map.put(inorder[i], i);
+
+        }
+
+        return helper(inorder, postorder, 0, inorder.length - 1);
+
+    }
+
+    private TreeNode helper(int[] inorder, int[] postorder, int start, int end) {
+
+        if (index < 0 || start > end) {
+
+            return null;
+
+        }
+
+        int inorderIndex = map.get(postorder[index--]);
+
+        TreeNode root = new TreeNode(inorder[inorderIndex]);
+
+        if (start == end) {
+
+            return root;
+
+        }
+
+        root.right = helper(inorder, postorder, inorderIndex + 1, end);
+
+        root.left = helper(inorder, postorder, start, inorderIndex - 1);
+
         return root;
+
     }
 }
